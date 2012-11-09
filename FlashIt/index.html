@@ -1,0 +1,194 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Math Smilies</title>
+<style>
+#oldSmilies
+{
+	height:10em;
+	width:10em;
+	background-image: url('smiliesBackground.jpg');	
+}
+#oldSmilies #message
+{
+	background-image: none;
+	background-color: yellow;
+}
+#problem
+{
+	font-size:40px;
+}
+.column
+{
+	float:left;
+}
+#numberColumn
+{
+	text-align:right;
+	width: 2em;
+}
+#answer input
+{
+	width: 2em;
+	font-size:100%;
+	text-align:right;
+}
+#second
+{
+	clear:both;
+}
+.clock
+{
+	clear:both;
+}
+</style>
+<script src="http://code.jquery.com/jquery-1.8.2.min.js" ></script>
+</head>
+<body>
+<h1>Math Smilies</h1>
+<div id="oldSmilies"><div id="message">You have <span id="sCount">0</span> smilies in your smiley bank.</div></div>
+<div id="smilies"></div>
+<div id="problem" class="column">
+<div id="symbolColumn" class="column">
+	<div class=>&nbsp;</div>
+	<div class="symbol">+</div>
+</div>
+<div id="numberColumn" class="column">
+	<div id="first">8</div>
+	<div id="second">10</div>
+	<hr/>
+	<div id="answer"><input type="text"/></div>
+</div>
+</div>
+<div class="clock">
+    <span class="min">3</span> minutes <span class="sec">0</span> seconds.
+</div>
+<script>
+$(document).ready(function(){
+	
+	showOldSmilies();
+	
+	newProblem();
+	
+	// make sure the console is defined and does not cause errors. 
+	if (typeof console === 'undefined'){
+		console = { log: function() {} };
+	}
+	
+	$('#answer input').keypress(function (e) {
+		// when the player presses the Enter key. 
+		  if (e.which == 13) {
+			    checkAnswer();
+			    e.preventDefault();
+			    return false; 
+			  }
+		});
+	
+});
+
+function newProblem(){
+	$('#first').html(Math.floor(Math.random()*10));
+	$('#second').html(Math.floor(Math.random()*18));	
+	$('#answer input').focus()[0].scrollIntoView();
+	
+}
+
+function checkAnswer()
+{
+	var answer = $('#answer input').val();
+	answer = parseInt(answer, 10);
+	var first = parseInt($('#first').html(), 10);
+	var second = parseInt($('#second').html(), 10);
+	console.log(first + "+" + second+ "=" + answer);
+	if (answer == first + second){
+		correct();		
+	} else {
+		wrong();	
+	}
+}
+
+function wrong(){
+	$('#answer input').css('color','red');
+}
+
+function correct(){
+	var s = $('#smilies').html();
+	s += "<img src='smiley-150x150.jpg' alt='correct'/>";
+	$('#smilies').html(s);
+	
+	incrementSmiliesCount();
+	newProblem();
+	$('#answer input').css('color','inherit').val('');
+}
+
+function incrementSmiliesCount(){
+	if (localStorage){
+		localStorage.setItem("smiliesCount", getOldSmilies() + 1);
+	}
+}
+
+function getOldSmilies(){
+	var oldSmiliesCount = 0;
+	if (localStorage) {
+		try	{ 
+			oldSmiliesCount = parseInt(localStorage.getItem("smiliesCount"),10) || 0;
+		} catch (e){
+			console.log(e);
+		}		
+	}
+	
+	return oldSmiliesCount;
+}
+
+function showOldSmilies(){
+	var oldSmiliesCount = getOldSmilies();
+	if (oldSmiliesCount > 0)	{
+		$("#oldSmilies").show();	
+		$("#oldSmilies #sCount").html(oldSmiliesCount)
+	} else	{
+		$("#oldSmilies").hide();	
+	}
+}
+
+
+
+function countdown() {
+    var m = $('.min');
+    var s = $('.sec'); 
+    if(m.length == 0 && parseInt(s.html()) <= 0) {
+    	var smileyCount = $('#smilies img').length;
+    	var message = 'You got ' + smileyCount.toString() + ' smilies in 3 minutes.';
+    	if (smileyCount > 10){
+    		message += '<img src="GoodSmilies.jpg" alt="good job"/>';	
+    	}
+        $('.clock').html(message)[0].scrollIntoView();   
+    }
+    
+    if(parseInt(s.html()) <= 0) {
+        m.html(parseInt(m.html()-1));  
+        s.html(60);
+    }
+    if(parseInt(m.html()) <= 0) {
+        $('.clock').html('<span class="sec">59</span> seconds.');
+    }
+    s.html(parseInt(s.html()-1));
+}
+setInterval('countdown()',1000);
+
+</script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22295602-2']);
+  _gaq.push(['_setDomainName', 'home.comcast.net']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body>
+</html>
