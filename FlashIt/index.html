@@ -1,69 +1,79 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Math Smilies</title>
 <style>
-#oldSmilies
-{
-	height:10em;
-	width:10em;
-	background-image: url('smiliesBackground.jpg');	
+#oldSmilies {
+	height: 10em;
+	width: 10em;
+	background-image: url('smiliesBackground.jpg');
 }
-#oldSmilies #message
-{
+
+#oldSmilies #message {
 	background-image: none;
 	background-color: yellow;
 }
-#problem
-{
-	font-size:40px;
+
+#problem {
+	font-size: 40px;
 }
-.column
-{
-	float:left;
+
+.column {
+	float: left;
 }
-#numberColumn
-{
-	text-align:right;
+
+#numberColumn {
+	text-align: right;
 	width: 2em;
 }
-#answer input
-{
+
+#answer input {
 	width: 2em;
-	font-size:100%;
-	text-align:right;
+	font-size: 100%;
+	text-align: right;
 }
-#second
-{
-	clear:both;
+
+#second {
+	clear: both;
 }
-.clock
-{
-	clear:both;
+
+.clock {
+	display: inline-block; /* ensure the width is shrinkwrapped */
+	margin:1em;
 }
 </style>
-<script src="http://code.jquery.com/jquery-1.8.2.min.js" ></script>
+
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script src="jquery.countdown.js"></script>
+<link rel="stylesheet" type="text/css" href="jquery.countdown.css">
 </head>
 <body>
-<h1>Math Smilies</h1>
-<div id="oldSmilies"><div id="message">You have <span id="sCount">0</span> smilies in your smiley bank.</div></div>
-<div id="smilies"></div>
-<div id="problem" class="column">
-<div id="symbolColumn" class="column">
-	<div class=>&nbsp;</div>
-	<div class="symbol">+</div>
-</div>
-<div id="numberColumn" class="column">
-	<div id="first">8</div>
-	<div id="second">10</div>
-	<hr/>
-	<div id="answer"><input type="text"/></div>
-</div>
-</div>
-<div class="clock">
-    <span class="min">3</span> minutes <span class="sec">0</span> seconds.
-</div>
-<script>
+	<h1>Math Smilies</h1>
+	<div id="oldSmilies">
+		<div id="message">
+			You have <span id="sCount">0</span> smilies in your smiley bank.
+		</div>
+	</div>
+	<div id="smilies"></div>
+	<div id="problem" class="column">
+		<div id="symbolColumn" class="column">
+			<div class=>&nbsp;</div>
+			<div class="symbol">+</div>
+		</div>
+		<div id="numberColumn" class="column">
+			<div id="first">8</div>
+			<div id="second">10</div>
+			<hr />
+			<div id="answer">
+				<input type="text" />
+			</div>
+		</div>
+	</div>
+	<div style="height:1em; clear:both;"></div>
+	<div class="clock">
+		
+	</div>
+	<script>
 $(document).ready(function(){
 	
 	showOldSmilies();
@@ -150,31 +160,20 @@ function showOldSmilies(){
 	}
 }
 
-function countdown() {
-    var m = $('.min');
-    var s = $('.sec'); 
-    if(m.length == 0 && parseInt(s.html()) <= 0) {
+$('.clock').countdown({
+	until: '3M', // minutes
+	format:'MS', // minutes and seconds
+	compact: true,
+	onExpiry: function(){
     	var smileyCount = $('#smilies img').length;
-    	var message = 'You got ' + smileyCount.toString() + ' smilies in 3 minutes.';
+    	var message = 'You earned ' + smileyCount.toString() + ' smilies in 3 minutes.';
     	if (smileyCount > 10){
     		message += '<img src="GoodSmilies.jpg" alt="good job"/>';	
     	}
-        $('.clock').html(message)[0].scrollIntoView();   
-    }
-    
-    if(parseInt(s.html()) <= 0) {
-        m.html(parseInt(m.html()-1));  
-        s.html(60);
-    }
-    if(parseInt(m.html()) <= 0) {
-        $('.clock').html('<span class="sec">59</span> seconds.');
-    }
-    s.html(parseInt(s.html()-1));
-}
-setInterval('countdown()',1000);
-
+        $(this).removeClass('hasCountdown').html(message)[0].scrollIntoView();   		
+	}});
 </script>
-<script type="text/javascript">
+	<script type="text/javascript">
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-22295602-2']);
