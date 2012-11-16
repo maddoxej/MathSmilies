@@ -38,10 +38,18 @@
 }
 
 .clock {
-	display: inline-block; /* ensure the width is shrinkwrapped */
+	float:left; /*to shrink wrap */
 	margin:1em;
 }
+
 </style>
+<!--[if IE]> 
+<style>
+.clock .countdown_row {
+	width:auto;
+}
+</style>
+<![endif]-->
 
 <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
 <script src="jquery.countdown.js"></script>
@@ -65,7 +73,7 @@
 			<div id="second">10</div>
 			<hr />
 			<div id="answer">
-				<input type="text" />
+				<input type="number" />
 			</div>
 		</div>
 	</div>
@@ -96,7 +104,7 @@ function Problem(options) {
 		var operator = '+';
 			
 		switch (options.level){
-		case Problem.difficultyLevel.easyAddition:
+		case Problem.difficultyLevel.addToTen:
 			// a number from 1 to 9
 			firstTerm = Math.floor(Math.random()*8) + 1;
 			var maxSecondTerm = 9 - firstTerm;
@@ -208,7 +216,7 @@ function Problem(options) {
 
 Problem.difficultyLevel = {
 		// adding single digit numbers with single digit results;
-		easyAddition: 1,
+		addToTen: 1,
 		// adding double digit numbers including 0 with carry
 		addWithCarry: 2,
 		// add and subtract single digit numbers from larger numbers
