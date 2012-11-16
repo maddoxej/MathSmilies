@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -63,9 +64,9 @@
 		</div>
 	</div>
 	<div id="smilies"></div>
-	<div id="problem" class="column">
+	<form id="problem" class="column">
 		<div id="symbolColumn" class="column">
-			<div class=>&nbsp;</div>
+			<div>&nbsp;</div>
 			<div class="operator">+</div>
 		</div>
 		<div id="numberColumn" class="column">
@@ -76,7 +77,7 @@
 				<input type="number" />
 			</div>
 		</div>
-	</div>
+	</form>
 	<div style="clear:both;"></div>
 	<div class="clock">
 		
@@ -92,6 +93,8 @@ $(document).ready(function(){
 	if (typeof console === 'undefined'){
 		console = { log: function() {} };
 	}
+	
+	$('#problem').submit(problem.checkAnswer);
 		
 });
 
