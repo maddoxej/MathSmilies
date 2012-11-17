@@ -83,19 +83,18 @@
 		
 	</div>
 	<script>
-$(document).ready(function(){
-	
-	oldSmilies.showOldSmilies();
-	
-	var problem = new Problem({level: Problem.difficultyLevel.addAndSubtract});
 	
 	// make sure the console is defined and does not cause errors. 
 	if (typeof console === 'undefined'){
 		console = { log: function() {} };
 	}
 	
-	$('#problem').submit(problem.checkAnswer);
-		
+$(document).ready(function(){
+	
+	oldSmilies.showOldSmilies();
+	
+	var problem = new Problem({level: Problem.difficultyLevel.addToTen});
+	
 });
 
 
@@ -231,9 +230,9 @@ Problem.difficultyLevel = {
 };
 
 
-// A count of smiles earned in the past. 
+// A count of smilies earned in the past. 
 var oldSmilies = {
-	// add one to the number of smiles stored and store the new value. 
+	// add one to the number of smilies stored and store the new value. 
 	incrementSmiliesCount: function(){
 		if (localStorage){
 			localStorage.setItem("smiliesCount", this.getOldSmilies() + 1);
