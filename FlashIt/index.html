@@ -54,6 +54,7 @@
 
 <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
 <script src="jquery.countdown.js"></script>
+<script src="oldSmilies.js"></script>
 <link rel="stylesheet" type="text/css" href="jquery.countdown.css">
 </head>
 <body>
@@ -78,6 +79,7 @@
 			</div>
 		</div>
 	</form>
+
 	<div style="clear:both;"></div>
 	<div class="clock">
 		
@@ -93,12 +95,15 @@ $(document).ready(function(){
 	
 	oldSmilies.showOldSmilies();
 	
-	var problem = new Problem({level: Problem.difficultyLevel.addToTen});
+	var problem = new Problem(oldSmilies.getOptions());
 	
 });
 
-
 function Problem(options) {
+	
+	var defaultOptions =  {level: Problem.difficultyLevel.addToTen};
+	
+	options = $.extend(defaultOptions, options);
 	
 	this.reset = function(){
 		var firstTerm = 10;
@@ -230,41 +235,6 @@ Problem.difficultyLevel = {
 };
 
 
-// A count of smilies earned in the past. 
-var oldSmilies = {
-	// add one to the number of smilies stored and store the new value. 
-	incrementSmiliesCount: function(){
-		if (localStorage){
-			localStorage.setItem("smiliesCount", this.getOldSmilies() + 1);
-		}
-	},
-	
-	// returns the number of old smilies saved, or 0 on error. 
-	getOldSmilies: function(){
-		var oldSmiliesCount = 0;
-		if (localStorage) {
-			try	{ 
-				oldSmiliesCount = parseInt(localStorage.getItem("smiliesCount"),10) || 0;
-			} catch (e){
-				console.log(e);
-			}		
-		}
-		
-		return oldSmiliesCount;
-	},
-	
-	// if there are any saved smilies show them. Otherwise hide. 
-	showOldSmilies: function(){
-		var oldSmiliesCount = this.getOldSmilies();
-		if (oldSmiliesCount > 0)	{
-			$("#oldSmilies").show();	
-			$("#oldSmilies #sCount").html(oldSmiliesCount)
-		} else	{
-			$("#oldSmilies").hide();	
-		}
-	}
-}
-
 $('.clock').countdown({
 	until: '3M', // minutes
 	format:'MS', // minutes and seconds
@@ -276,6 +246,13 @@ $('.clock').countdown({
     	if (smileyCount > 10){
     		message += '<img src="GoodSmilies.jpg" alt="good job"/>';	
     	}
+    	
+    	// Track the event in Google analytics. Otherwise Google doesn't know that there was any interaction with the page and calls it a bounce.  
+    	if (_gaq) {
+    		//_trackEvent(category, action, opt_label, opt_value, opt_noninteraction)
+    		_gaq.push(['_trackEvent', 'Acomplishments', 'SmileyCount', message, smileyCount]);
+    	}
+    	
         $(this).removeClass('hasCountdown').html(message)[0].scrollIntoView();   		
 	}});
 </script>

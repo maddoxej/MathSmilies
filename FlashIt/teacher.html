@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Math Smilies Teacher edition</title>
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script src="oldSmilies.js"></script>
+<style>
+#teacherSettings fieldset {
+	width:45em;
+}
+
+#teacherSettings input, #teacherSettings select {
+	width:20em;
+	float:left;
+}
+
+#teacherSettings label {
+	width:20em;
+	float:left;
+	display:block;
+}
+
+
+</style>
+</head>
+<body>
+	<h1>Math Smilies Teacher edition</h1>
+	<p>The smileybank for the current user on this computer has</p>
+	<form id="teacherSettings">
+	<fieldset>
+	<label for="smileyBank">Smiley Bank </label><input type="text" id="smileyBank" />
+	<label for="Level">Level</label>
+	 
+		<select id="Level" on>
+		<!--  these options match the values of Problem.difficultyLevel. -->
+			<option value="1">
+			Add 1 to 9 to get up to 9
+			<option value="2">
+			Double digits
+			</option>
+			<option value="3">
+			Add And Subtract
+			</option>	
+			<option value="4">
+			More Challenging
+			</option>
+			<option value="5">
+			Hard		
+			</option>
+		</select>
+	<input type="button" value="update" onclick="update()" />
+	<input type="button" value="clear" onclick="if (confirm('The Smileybank and options will be reset.')) {oldSmilies.clear(); $('#smileyBank').val('');}" />
+	</fieldset>
+	</form>
+	<script> 
+$(document).ready(function(){
+	
+	$('#smileyBank').val(oldSmilies.getOldSmilies());
+	$('#Level').val(oldSmilies.getOptions().level);	
+	
+});	
+
+function update(){
+	oldSmilies.setOldSmilies($('#smileyBank').val())
+	var options = {};
+	options.level = Number($('#Level').val());
+	oldSmilies.setOptions(options);
+}
+
+</script>
+</body>
+</html>
