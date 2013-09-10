@@ -172,7 +172,7 @@ function Problem(options) {
 		
 		
 		$('#answer input').focus()[0].scrollIntoView();
-	}
+	};
 	
 	this.checkAnswer = function()
 	{
@@ -188,11 +188,11 @@ function Problem(options) {
 		} else {
 			this.wrong();	
 		}
-	}
+	};
 	
 	this.wrong = function(){
 		$('#answer input').css('color','red');
-	}
+	};
 	
 	this.correct = function(){
 		var s = $('#smilies').html();
@@ -200,9 +200,9 @@ function Problem(options) {
 		$('#smilies').html(s);
 		
 		oldSmilies.incrementSmiliesCount();
-		this.reset();
+		thisProblem.reset();
 		$('#answer input').css('color','inherit').val('');
-	}
+	};
 	
 	$('#answer input').keypress(function (e) {
 		// when the player presses the Enter key. 
@@ -213,7 +213,7 @@ function Problem(options) {
 			  }
 		});
 	
-	var options = options || {
+	options = options || {
 		level: this.difficultyLevel.addWithCarry
 	};
 	
@@ -254,7 +254,8 @@ $('.clock').countdown({
     	}
     	
         $(this).removeClass('hasCountdown').html(message)[0].scrollIntoView();   		
-	}});
+	}
+});
 </script>
 	<script type="text/javascript">
 

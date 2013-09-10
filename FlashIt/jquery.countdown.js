@@ -1,8 +1,7 @@
 /* http://keith-wood.name/countdown.html
-   Countdown for jQuery v1.6.0.
+   Countdown for jQuery v1.6.3.
    Written by Keith Wood (kbwood{at}iinet.com.au) January 2008.
-   Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
-   MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
+   Available under the MIT (https://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt) license. 
    Please attribute the author if you use it. */
 
 /* Display a countdown timer.
@@ -54,9 +53,15 @@ function Countdown() {
 	};
 	$.extend(this._defaults, this.regional['']);
 	this._serverSyncs = [];
+	var now = (typeof Date.now == 'function' ? Date.now :
+		function() { return new Date().getTime(); });
+	var perfAvail = (window.performance && typeof window.performance.now == 'function');
 	// Shared timer for all countdowns
 	function timerCallBack(timestamp) {
-		var drawStart = (timestamp || new Date().getTime());
+		var drawStart = (timestamp < 1e12 ? // New HTML5 high resolution timer
+			(perfAvail ? (performance.now() + performance.timing.navigationStart) : now()) :
+			// Integer milliseconds since unix epoch
+			timestamp || now());
 		if (drawStart - animationStartTime >= 1000) {
 			plugin._updateTargets();
 			animationStartTime = drawStart;
@@ -73,7 +78,9 @@ function Countdown() {
 		setInterval(function() { plugin._updateTargets(); }, 980); // Fall back to good old setInterval
 	}
 	else {
-		animationStartTime = window.mozAnimationStartTime || new Date().getTime();
+		animationStartTime = window.animationStartTime ||
+			window.webkitAnimationStartTime || window.mozAnimationStartTime ||
+			window.oAnimationStartTime || window.msAnimationStartTime || now();
 		requestAnimationFrame(timerCallBack);
 	}
 }
@@ -226,12 +233,17 @@ $.extend(Countdown.prototype, {
 			options = {};
 			options[name] = value;
 		}
+		if (options.layout) {
+			options.layout = options.layout.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+		}
 		this._resetExtraLabels(inst.options, options);
+		var timezoneChanged = (inst.options.timezone != options.timezone);
 		$.extend(inst.options, options);
-		this._adjustSettings(target, inst);
+		this._adjustSettings(target, inst,
+			options.until != null || options.since != null || timezoneChanged);
 		var now = new Date();
 		if ((inst._since && inst._since < now) || (inst._until && inst._until > now)) {
-			this._addTarget(target);
+			this._addTarget(target[0]);
 		}
 		this._updateCountdown(target, inst);
 	},
@@ -295,7 +307,7 @@ $.extend(Countdown.prototype, {
 		}
 		if (changingLabels) {
 			for (var n in base) { // Remove custom numbered labels
-				if (n.match(/[Ll]abels[02-9]/)) {
+				if (n.match(/[Ll]abels[02-9]|compactLabels1/)) {
 					base[n] = null;
 				}
 			}
@@ -304,8 +316,9 @@ $.extend(Countdown.prototype, {
 	
 	/* Calculate interal settings for an instance.
 	   @param  target  (element) the containing division
-	   @param  inst    (object) the current settings for this instance */
-	_adjustSettings: function(target, inst) {
+	   @param  inst    (object) the current settings for this instance
+	   @param  recalc  (boolean) true if until or since are set */
+	_adjustSettings: function(target, inst, recalc) {
 		var now;
 		var serverOffset = 0;
 		var serverEntry = null;
@@ -328,16 +341,18 @@ $.extend(Countdown.prototype, {
 		}
 		var timezone = inst.options.timezone;
 		timezone = (timezone == null ? -now.getTimezoneOffset() : timezone);
-		inst._since = inst.options.since;
-		if (inst._since != null) {
-			inst._since = this.UTCDate(timezone, this._determineTime(inst._since, null));
-			if (inst._since && serverOffset) {
-				inst._since.setMilliseconds(inst._since.getMilliseconds() + serverOffset);
+		if (recalc || (!recalc && inst._until == null && inst._since == null)) {
+			inst._since = inst.options.since;
+			if (inst._since != null) {
+				inst._since = this.UTCDate(timezone, this._determineTime(inst._since, null));
+				if (inst._since && serverOffset) {
+					inst._since.setMilliseconds(inst._since.getMilliseconds() + serverOffset);
+				}
 			}
-		}
-		inst._until = this.UTCDate(timezone, this._determineTime(inst.options.until, now));
-		if (serverOffset) {
-			inst._until.setMilliseconds(inst._until.getMilliseconds() + serverOffset);
+			inst._until = this.UTCDate(timezone, this._determineTime(inst.options.until, now));
+			if (serverOffset) {
+				inst._until.setMilliseconds(inst._until.getMilliseconds() + serverOffset);
+			}
 		}
 		inst._show = this._determineShow(inst);
 	},
@@ -401,8 +416,8 @@ $.extend(Countdown.prototype, {
 	   @return  (number[7]) the current periods for the countdown */
 	_getTimesPlugin: function(target) {
 		var inst = $.data(target, this.propertyName);
-		return (!inst ? null : (!inst._hold ? inst._periods :
-			this._calculatePeriods(inst, inst._show, inst.options.significant, new Date())));
+		return (!inst ? null : (inst._hold == 'pause' ? inst._savePeriods : (!inst._hold ? inst._periods :
+			this._calculatePeriods(inst, inst._show, inst.options.significant, new Date()))));
 	},
 
 	/* A time may be specified as an exact value or a relative one.
@@ -594,7 +609,7 @@ $.extend(Countdown.prototype, {
 		// Replace period containers: {p<}...{p>}
 		for (var i = Y; i <= S; i++) {
 			var period = 'yowdhms'.charAt(i);
-			var re = new RegExp('\\{' + period + '<\\}(.*)\\{' + period + '>\\}', 'g');
+			var re = new RegExp('\\{' + period + '<\\}([\\s\\S]*)\\{' + period + '>\\}', 'g');
 			html = html.replace(re, ((!significant && show[i]) ||
 				(significant && showSignificant[i]) ? '$1' : ''));
 		}
