@@ -243,8 +243,9 @@ $('.clock').countdown({
 		// Replace the clock with a message
     	var smileyCount = $('#smilies img').length;
     	var message = 'You earned ' + smileyCount.toString() + ' smilies in 3 minutes.';
+    	var reward = '';
     	if (smileyCount > 10){
-    		message += '<img src="GoodSmilies.jpg" alt="good job"/>';	
+    		reward = '<img src="GoodSmilies.jpg" alt="good job"/>';	
     	}
     	
     	// Track the event in Google analytics. Otherwise Google doesn't know that there was any interaction with the page and calls it a bounce.  
@@ -253,7 +254,7 @@ $('.clock').countdown({
     		_gaq.push(['_trackEvent', 'Acomplishments', 'SmileyCount', message, smileyCount]);
     	}
     	
-        $(this).removeClass('hasCountdown').html(message)[0].scrollIntoView();   		
+        $(this).removeClass('hasCountdown').html(message + reward)[0].scrollIntoView();   		
 	}
 });
 </script>
