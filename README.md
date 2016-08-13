@@ -1,6 +1,7 @@
 Math Smilies
 ===========
 
+Hosted on GitHub Pages. http://maddoxej.github.io/MathSmilies/
 This is a JavaScript game for practicing addition and subtraction. 
 The problems are aimed at first graders trying to improve their speed. 
 
